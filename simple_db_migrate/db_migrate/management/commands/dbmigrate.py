@@ -4,6 +4,7 @@ import os
 import fnmatch
 from optparse import make_option
 
+import django
 from django import db
 from django.conf import settings
 from django.core.management.base import BaseCommand
@@ -55,15 +56,25 @@ class Command(BaseCommand):
 
     @staticmethod
     def _locate_resource_dirs(complement, pattern):
-        _dirs = []
-        for app in settings.INSTALLED_APPS:
-            fromlist = ""
-
+        def fromlist_for(app):
             app_parts = app.split(".")
             if len(app_parts) > 1:
-                fromlist = ".".join(app_parts[1:])
+                return ".".join(app_parts[1:])
+            return ""
 
-            module = __import__(app, fromlist=fromlist)
+        _dirs = []
+        for app in settings.INSTALLED_APPS:
+            fromlist = fromlist_for(app)
+            try:
+                module = __import__(app, fromlist=fromlist)
+            except ImportError:
+                # Django 1.9+ requires explicit AppConfig, which is not a module
+                if django.VERSION[:2] >= (1, 9):
+                    app = app.rsplit(".", 1)[0]
+                    fromlist = fromlist_for(app)
+                    module = __import__(app, fromlist=fromlist)
+                else:
+                    raise
             app_dir = os.path.abspath("/" + "/".join(module.__file__.split("/")[1:-1]))
 
             resource_dir = os.path.join(app_dir, complement)
