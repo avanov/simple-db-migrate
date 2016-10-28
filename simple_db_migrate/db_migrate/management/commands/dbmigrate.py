@@ -1,8 +1,6 @@
 #-*- coding:utf-8 -*-
-
 import os
 import fnmatch
-from optparse import make_option
 
 import django
 from django import db
@@ -15,13 +13,15 @@ class Command(BaseCommand):
     help = "Migrate databases."
     args = "[db_migrate_options]"
 
-    option_list = BaseCommand.option_list + simple_db_migrate.cli.CLI.options_to_parser() + (
-        make_option(
-            '--database', action='store', dest='database',
+    def add_arguments(self, parser):
+        # argparse's Named (optional) arguments
+        parser.add_argument(
+            '--database',
+            action='store',
+            dest='database',
             default=getattr(db, 'DEFAULT_DB_ALIAS', 'default'),
-            help='Nominates a database to synchronize. Defaults to the "default" database.'
-        ),
-    )
+            help='Nominates a database to synchronize. Defaults to the "default" database.',
+        )
 
     def handle(self, *args, **options):
         if not options.get('database_migrations_dir'):
