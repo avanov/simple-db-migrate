@@ -28,7 +28,6 @@ class CLI(object):
     @staticmethod
     def parse(args=None):
         parser = argparse.ArgumentParser()
-        parser.add_argument('-f', '--foo', help='old foo help')
         parser = CLI.options_to_parser(parser)
         parser.add_argument("-v", "--version",
                 action="store_true",

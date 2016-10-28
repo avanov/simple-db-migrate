@@ -32,7 +32,7 @@ class Command(BaseCommand):
             if options.get(options_key) == None:
                 options[options_key] = Command._get_database_option(options, key)
 
-        simple_db_migrate.run(options=options)
+        simple_db_migrate.run(options)
 
     @staticmethod
     def _get_database_option(options, key):

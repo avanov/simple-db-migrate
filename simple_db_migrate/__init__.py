@@ -14,8 +14,8 @@ if hasattr(sys.stdout, 'encoding') and sys.stdout.encoding != 'UTF-8':
     sys.stdout = codecs.getwriter('utf-8')(sys.stdout)
 
 def run_from_argv(args=None):
-    (options, _) = CLI.parse(args)
-    run(options.__dict__)
+    options = CLI.parse(args)
+    run(vars(options))
 
 def run(options):
     try:
@@ -64,7 +64,7 @@ def run(options):
             config.update('database_version_table', "__db_version__")
 
         # paused mode forces log_level to 2
-        log_level = int(options.get('log_level'))
+        log_level = int(options.get('log_level', 1))
         if options.get('paused_mode'):
             log_level = 2
 
