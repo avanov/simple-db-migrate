@@ -9,13 +9,11 @@ from .main import Main
 
 SIMPLE_DB_MIGRATE_VERSION = '2.2.0'
 
-# fixing print in non-utf8 terminals
-if hasattr(sys.stdout, 'encoding') and sys.stdout.encoding != 'UTF-8':
-    sys.stdout = codecs.getwriter('utf-8')(sys.stdout)
 
 def run_from_argv(args=None):
     options = CLI.parse(args)
     run(vars(options))
+
 
 def run(options):
     try:
