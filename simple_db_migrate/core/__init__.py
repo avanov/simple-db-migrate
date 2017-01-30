@@ -77,9 +77,9 @@ class Migration(object):
             return ""
 
         try:
-            sql = unicode(sql.decode(script_encoding))
+            sql = str(sql.decode(script_encoding))
         except UnicodeEncodeError:
-            sql = unicode(sql)
+            sql = str(sql)
         return sql
 
     @staticmethod
