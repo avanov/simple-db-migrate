@@ -6,6 +6,7 @@ import re
 import imp
 import tempfile
 import sys
+from functools import cmp_to_key
 from simple_db_migrate.helpers import Utils
 
 class Migration(object):
@@ -54,6 +55,8 @@ class Migration(object):
         return SQL_UP, SQL_DOWN
 
     def compare_to(self, another_migration):
+        if another_migration.version is None:
+            return 1
         if self.version < another_migration.version:
             return -1
         if self.version > another_migration.version:
@@ -69,7 +72,7 @@ class Migration(object):
 
     @staticmethod
     def sort_migrations_list(migrations, reverse=False):
-        return sorted(migrations, cmp=lambda x,y: x.compare_to(y), reverse=reverse)
+        return sorted(migrations, key=cmp_to_key(lambda x,y: x.compare_to(y)), reverse=reverse)
 
     @staticmethod
     def ensure_sql_unicode(sql, script_encoding):
@@ -77,8 +80,8 @@ class Migration(object):
             return ""
 
         try:
-            sql = str(sql.decode(script_encoding))
-        except UnicodeEncodeError:
+            sql = str(sql, script_encoding)
+        except (TypeError, UnicodeEncodeError):
             sql = str(sql)
         return sql
 
