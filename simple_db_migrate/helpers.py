@@ -1,6 +1,7 @@
 import os
 import sys
 import tempfile
+import codecs
 
 class Lists(object):
 
@@ -27,8 +28,9 @@ class Utils(object):
         try:
             # add settings dir from path
             sys.path.insert(0, path)
-
-            execfile(full_filename, global_dict, global_dict)
+            with codecs.open(full_filename, 'r', 'utf-8') as f:
+                obj_text = f.read()
+            exec(obj_text, global_dict, global_dict)
         except IOError:
             raise Exception("%s: file not found" % full_filename)
         except Exception as e:
@@ -42,7 +44,9 @@ class Utils(object):
                 f.write('#-*- coding:%s -*-\n%s' % (file_encoding, content))
                 f.close()
 
-                execfile(temp_abspath, global_dict, global_dict)
+                with codecs.open(temp_abspath, 'r', 'utf-8') as f:
+                    obj_text = f.read()
+                exec(obj_text, global_dict, global_dict)
             except Exception as e:
                 raise Exception("error interpreting config file '%s': %s" % (filename, str(e)))
         finally:
