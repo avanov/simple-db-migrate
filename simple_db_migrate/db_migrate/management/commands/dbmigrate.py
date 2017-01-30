@@ -1,6 +1,7 @@
 #-*- coding:utf-8 -*-
 import os
 import fnmatch
+from importlib import import_module
 
 import django
 from django import db
@@ -66,13 +67,13 @@ class Command(BaseCommand):
         for app in settings.INSTALLED_APPS:
             fromlist = fromlist_for(app)
             try:
-                module = __import__(app, fromlist=fromlist)
+                module = import_module(app)
             except ImportError:
                 # Django 1.9+ requires explicit AppConfig, which is not a module
                 if django.VERSION[:2] >= (1, 9):
                     app = app.rsplit(".", 1)[0]
                     fromlist = fromlist_for(app)
-                    module = __import__(app, fromlist=fromlist)
+                    module = import_module(app)
                 else:
                     raise
             app_dir = os.path.abspath("/" + "/".join(module.__file__.split("/")[1:-1]))

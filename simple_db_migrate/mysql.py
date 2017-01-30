@@ -1,7 +1,7 @@
 import re
-from core import Migration
-from core.exceptions import MigrationException
-from helpers import Utils
+from .core import Migration
+from .core.exceptions import MigrationException
+from .helpers import Utils
 
 class MySQL(object):
     __re_objects = re.compile("(?ims)(?P<pre>.*?)(?P<main>create[ \n\t\r]*(definer[ \n\t\r]*=[ \n\t\r]*[^ \n\t\r]*[ \n\t\r]*)?(trigger|function|procedure).*?)\n[ \n\t\r]*/([ \n\t\r]+(?P<pos>.*)|$)")
